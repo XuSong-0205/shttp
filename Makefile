@@ -4,7 +4,7 @@ CURR_DIR := $(shell pwd)
 BIN_DIR := bin
 SRC_DIR := src
 BUILD_DIR := build
-DIR_CHECK := $(BIN_DIR) $(BUILD_DIR)
+CHECK_DIR := $(BIN_DIR) $(BUILD_DIR)
 
 
 SRC := $(SRC_DIR)/ \
@@ -34,12 +34,12 @@ START := start
 
 
 
-$(SHTTP) : $(DIR_CHECK) $(OBJS)
+$(SHTTP) : $(CHECK_DIR) $(OBJS)
 	$(CXX) $^ -o $@ $(LINK_FLAGS)
 	@echo ---------over---------
 
 
-$(DIR_CHECK) : 
+$(CHECK_DIR) : 
 	@if [ ! -e $@ ]; then echo dir $@ not exist, create $@ && mkdir -p $@; fi
 
 
