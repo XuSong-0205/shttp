@@ -4,6 +4,7 @@ CURR_DIR := $(shell pwd)
 BIN_DIR := bin
 SRC_DIR := src
 BUILD_DIR := build
+DIR_CHECK := $(BIN_DIR) $(BUILD_DIR)
 
 
 SRC := $(SRC_DIR)/ \
@@ -33,9 +34,13 @@ START := start
 
 
 
-$(SHTTP) : $(OBJS)
+$(SHTTP) : $(DIR_CHECK) $(OBJS)
 	$(CXX) $^ -o $@ $(LINK_FLAGS)
 	@echo ---------over---------
+
+
+$(DIR_CHECK) : 
+	@if [ ! -e $@ ]; then echo dir $@ not exist, create $@ && mkdir -p $@; fi
 
 
 $(BUILD_DIR)/%.o : %.cpp
