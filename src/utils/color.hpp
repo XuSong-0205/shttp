@@ -1,5 +1,5 @@
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef _COLOR_H_
+#define _COLOR_H_
 
 #ifndef _COLOR
     #define COLOR_BEGIN namespace color {
@@ -44,17 +44,17 @@ enum status : int
 };
 
 
-std::ostream& set_attribute(std::ostream& os, int value)
+inline std::ostream& set_attribute(std::ostream& os, int value)
 {
     return os << "\033[" << value << "m";
 }
 
-std::ostream& operator<<(std::ostream& os, color col)
+inline std::ostream& operator<<(std::ostream& os, color col)
 {
     return set_attribute(os, col);
 }
 
-std::ostream& operator<<(std::ostream& os, status stu)
+inline std::ostream& operator<<(std::ostream& os, status stu)
 {
     return set_attribute(os, stu);
 }
@@ -62,4 +62,4 @@ std::ostream& operator<<(std::ostream& os, status stu)
 
 COLOR_END
 
-#endif	// COLOR_H
+#endif	// _COLOR_H_

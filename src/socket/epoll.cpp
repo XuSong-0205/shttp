@@ -3,7 +3,7 @@
 
 SX_BEGIN
 
-Epoll::Epoll() : m_epollfd(-1), m_events{ 0 }
+Epoll::Epoll() : m_epollfd(-1), m_events_num(0), m_events{ 0 }
 {
     create();
 }
@@ -19,12 +19,29 @@ bool Epoll::create()
     return valid();
 }
 
-bool Epoll::add_event(const Socket& sock, uint32_t events)const
+bool Epoll::add_event(const Socket& sock, uint32_t events)
 {
-    epoll_event event;
-    event.data.fd = sock;
-    event.events = events;
-    return epoll_ctl(m_epollfd, EPOLL_CTL_ADD, sock, &event) == 0;
+    // 查找一个空的 events (待优化，哈希表，链表？)
+    bool is_find = false;
+    for (size_t i = 0; i < m_events.size(); ++i)
+    {
+        const auto index = (i + m_events_num) % m_events.size();
+        if (m_events.at(m_events_num).data.fd != -1)
+        {
+            m_events_num = index;
+            is_find = true;
+            break;
+        }
+    }
+    if (!is_find)
+    {
+        return false;
+    }
+
+    // 添加
+    m_events.at(m_events_num).data.fd = sock;
+    m_events.at(m_events_num).events = events;
+    return epoll_ctl(m_epollfd, EPOLL_CTL_ADD, sock, &m_events.at(m_events_num++)) == 0;
 }
 
 Epoll::pair_array_const_iterator Epoll::wait(int wait_time)
@@ -49,14 +66,17 @@ void Epoll::close()
 
 bool Epoll::del_event(size_t pos)
 {
-    if (pos < m_events.size())
-    {
-        m_events.at(pos).data.fd = -1;
-        return true;
-    }
-
-    return false;
+    epoll_event event;
+    event.data.fd = m_events.at(m_events_num).data.fd;
+    event.events = m_events.at(m_events_num).events;
+    // 修改当前 events 
+    m_events.at(m_events_num).data.fd = -1;
+    event.events = m_events.at(m_events_num).events = 0;
+    m_events_num = pos;
+    // 从 epoll 中删除
+    return epoll_ctl(m_epollfd, EPOLL_CTL_DEL, event.data.fd, &event);
 }
+
 
 
 SX_END

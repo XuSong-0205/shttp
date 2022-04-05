@@ -15,6 +15,7 @@ class Epoll
 {
 private:
     int m_epollfd;
+    size_t m_events_num;
     array<epoll_event, EVENT_NUM> m_events;
 
     using array_type = decltype(m_events);
@@ -28,7 +29,7 @@ public:
     // 创建一个 epoll 句柄
     bool create();
     // 将 event 注册到 epoll 中，默认注册 可读|可写|挂起|错误|ET
-    bool add_event(const Socket& sock, uint32_t events = DEFAULT_EVENTS)const;
+    bool add_event(const Socket& sock, uint32_t events = DEFAULT_EVENTS);
     // 等待 epool 事件到来，默认阻塞，返回有事件的 m_events 的一组迭代器 [beg, end)
     pair_array_const_iterator wait(int wait_time = -1);
     // 是否有效
@@ -37,7 +38,6 @@ public:
     void close();
     // 从 events 数组中删除一个 socket 
     bool del_event(size_t pos);
-
 };
 
 

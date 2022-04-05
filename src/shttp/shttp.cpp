@@ -33,7 +33,7 @@ void shttp::create_config()const
 // 读取配置信息
 void shttp::read_config()
 {
-    ifstream ifile(".../config/config.json");
+    ifstream ifile("../config/config.json");
     json conf;
     if (ifile.is_open())
     {

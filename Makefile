@@ -29,18 +29,22 @@ CXXFLAGS := -Wall -g -std=c++14 -I $(INCLUDE)
 
 
 SHTTP_NAME := shttp
-SHTTP := $(BIN_DIR)/$(SHTTP_NAME)
+SHTTP_BIN := $(BIN_DIR)/$(SHTTP_NAME)
+SHTTP := $(SHTTP_NAME)
 START := start
 
 
-
-$(SHTTP) : $(CHECK_DIR) $(OBJS)
-	$(CXX) $^ -o $@ $(LINK_FLAGS)
+# main target
+$(SHTTP) : $(CHECK_DIR) $(SHTTP_BIN)
 	@echo ---------over---------
 
 
 $(CHECK_DIR) : 
 	@if [ ! -e $@ ]; then echo dir $@ not exist, create $@ && mkdir -p $@; fi
+
+
+$(SHTTP_BIN) : $(OBJS)
+	$(CXX) $^ -o $@ $(LINK_FLAGS)
 
 
 $(BUILD_DIR)/%.o : %.cpp
